@@ -1,6 +1,6 @@
 # Instruções de uso
 
-Para saber o passo a passo de execução do projeto acesse o arquivo **HELP.md** presente na raiz desse projeto
+Para saber o passo a passo de execução tanto da api quanto do web acesse o arquivo **README.md** presente na raiz de cada projeto.
 
 # Votação
 
