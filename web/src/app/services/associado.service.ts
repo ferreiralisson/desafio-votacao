@@ -13,4 +13,22 @@ export class AssociadoService {
   getAssociados(): Observable<AssociadoDTO> {
     return this.httpClient.get<AssociadoDTO>(Constants.base_url + '/associate');
   }
+
+  createAssociado(associado: AssociadoDTO) {
+    return this.httpClient.post(`${Constants.base_url}/associate`, associado, {
+      observe: 'response',
+      responseType: 'text',
+    });
+  }
+
+  updateAssociado(associado: AssociadoDTO) {
+    return this.httpClient.put(
+      `${Constants.base_url}/associate/${associado.id}`,
+      associado,
+      {
+        observe: 'response',
+        responseType: 'text',
+      }
+    );
+  }
 }
