@@ -1,6 +1,7 @@
 package br.com.dbserver.voting.services.impl;
 
-import br.com.dbserver.voting.dtos.AssociateDTO;
+import br.com.dbserver.voting.dtos.associate.AssociateRequestDTO;
+import br.com.dbserver.voting.dtos.associate.AssociateResponseDTO;
 import br.com.dbserver.voting.helpers.AssociateCreator;
 import br.com.dbserver.voting.models.Associate;
 import br.com.dbserver.voting.repositories.AssociateRepository;
@@ -41,18 +42,18 @@ class AssociateServiceImplTest {
 
     @Test
     public void createSchedule_WhenSuccessful() {
-        assertThatCode(() -> associateService.createAssociate(AssociateCreator.createAssociateDtoValid())).doesNotThrowAnyException();
+        assertThatCode(() -> associateService.createAssociate(AssociateCreator.createAssociateRequestDtoValid())).doesNotThrowAnyException();
     }
 
     @Test
     public void shouldListAllAssociatesSuccessfully(){
         Pageable pageable = PageRequest.of(10, 10);
-        String expectedCpf = AssociateCreator.createAssociateDtoValid().cpf();
-        Page<AssociateDTO> associatePage = associateService.listAll(pageable);
+        String expectedCpf = AssociateCreator.createAssociateRequestDtoValid().cpf();
+        Page<AssociateResponseDTO> associatePage = associateService.listAll(pageable);
 
         assertThat(associatePage).isNotEmpty().hasSize(1);
         assertThat(associatePage.toList()).isNotEmpty();
-        assertThat(associatePage.toList().get(0).cpf()).isEqualTo(expectedCpf);
+        assertThat(associatePage.toList().get(0).getCpf()).isEqualTo(expectedCpf);
     }
 
 }

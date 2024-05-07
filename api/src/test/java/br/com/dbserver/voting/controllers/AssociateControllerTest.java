@@ -1,6 +1,7 @@
 package br.com.dbserver.voting.controllers;
 
-import br.com.dbserver.voting.dtos.AssociateDTO;
+import br.com.dbserver.voting.dtos.associate.AssociateRequestDTO;
+import br.com.dbserver.voting.dtos.associate.AssociateResponseDTO;
 import br.com.dbserver.voting.helpers.AssociateCreator;
 import br.com.dbserver.voting.helpers.Constants;
 import br.com.dbserver.voting.services.AssociateService;
@@ -49,30 +50,30 @@ class AssociateControllerTest {
 
     @BeforeEach
     void setup() {
-        PageImpl<AssociateDTO> associatePage = new PageImpl<>(List.of(AssociateCreator.associateDTOValid()));
+        PageImpl<AssociateResponseDTO> associatePage = new PageImpl<>(List.of(AssociateCreator.associateResponseDtoValid()));
         when(associateServiceMock.listAll(any())).thenReturn(associatePage);
         doNothing().when(associateServiceMock).createAssociate(AssociateCreator.associateDTOValid());
     }
 
     @Test
     public void shouldCreateAssociateSuccessfully(){
-        AssociateDTO associateDTO = AssociateCreator.createAssociateDtoValid();
-        assertThatCode(() -> associateController.createAssociate(associateDTO))
+        AssociateRequestDTO associateRequestDTO = AssociateCreator.createAssociateRequestDtoValid();
+        assertThatCode(() -> associateController.createAssociate(associateRequestDTO))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> entity = associateController.createAssociate(associateDTO);
+        ResponseEntity<Void> entity = associateController.createAssociate(associateRequestDTO);
         assertThat(entity).isNotNull();
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
     public void shouldCreateAssociateValidationFailure() throws Exception {
-        AssociateDTO associateDTO = AssociateCreator.createAssociateDtoInvalid();
+        AssociateRequestDTO associateRequestDTO = AssociateCreator.createAssociateRequestDtoInvalid();
 
-        doNothing().when(associateServiceMock).createAssociate(any(AssociateDTO.class));
+        doNothing().when(associateServiceMock).createAssociate(any(AssociateRequestDTO.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post(Constants.API_VERSION + "/associate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(associateDTO)))
+                        .content(new ObjectMapper().writeValueAsString(associateRequestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -80,10 +81,10 @@ class AssociateControllerTest {
     public void shouldListAllAssociatesSuccessfully(){
         Pageable pageable = PageRequest.of(10, 10);
         String expectedCpf = AssociateCreator.associateDTOValid().cpf();
-        Page<AssociateDTO> associatePage = associateController.listAll(pageable).getBody();
+        Page<AssociateResponseDTO> associatePage = associateController.listAll(pageable).getBody();
 
         assertThat(associatePage).isNotEmpty().hasSize(1);
         assertThat(associatePage.toList()).isNotEmpty();
-        assertThat(associatePage.toList().get(0).cpf()).isEqualTo(expectedCpf);
+        assertThat(associatePage.toList().get(0).getCpf()).isEqualTo(expectedCpf);
     }
 }

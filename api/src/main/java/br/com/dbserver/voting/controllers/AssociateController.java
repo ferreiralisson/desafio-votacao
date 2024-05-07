@@ -1,6 +1,7 @@
 package br.com.dbserver.voting.controllers;
 
-import br.com.dbserver.voting.dtos.AssociateDTO;
+import br.com.dbserver.voting.dtos.associate.AssociateRequestDTO;
+import br.com.dbserver.voting.dtos.associate.AssociateResponseDTO;
 import br.com.dbserver.voting.helpers.Constants;
 import br.com.dbserver.voting.services.AssociateService;
 import jakarta.validation.Valid;
@@ -26,17 +27,17 @@ public class AssociateController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createAssociate(@RequestBody @Valid AssociateDTO associateDTO){
-        logger.info("Iniciando a criação de um associado - [{}]", associateDTO.name());
-        associateService.createAssociate(associateDTO);
-        logger.info("Criação do associado concluída - [{}]", associateDTO.name());
+    public ResponseEntity<Void> createAssociate(@RequestBody @Valid AssociateRequestDTO associateRequestDTO){
+        logger.info("Iniciando a criação de um associado - [{}]", associateRequestDTO.name());
+        associateService.createAssociate(associateRequestDTO);
+        logger.info("Criação do associado concluída - [{}]", associateRequestDTO.name());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<Page<AssociateDTO>> listAll(Pageable pageable){
+    public ResponseEntity<Page<AssociateResponseDTO>> listAll(Pageable pageable){
         logger.info("Iniciando a listagem de associados - Página: {}, Tamanho da Página: {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<AssociateDTO> associates = associateService.listAll(pageable);
+        Page<AssociateResponseDTO> associates = associateService.listAll(pageable);
         logger.info("Listagem de associados concluída - Página: {}, Tamanho da Página: {}", pageable.getPageNumber(), pageable.getPageSize());
         return new ResponseEntity<>(associates, HttpStatus.OK);
     }

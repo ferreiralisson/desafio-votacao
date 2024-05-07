@@ -6,10 +6,7 @@ import br.com.dbserver.voting.dtos.vote.VoteResponseDTO;
 import br.com.dbserver.voting.enums.StatusCpfEnum;
 import br.com.dbserver.voting.enums.StatusVotingSessionEnum;
 import br.com.dbserver.voting.enums.TypeVoteEnum;
-import br.com.dbserver.voting.models.Associate;
-import br.com.dbserver.voting.models.Schedule;
-import br.com.dbserver.voting.models.Vote;
-import br.com.dbserver.voting.models.VotingSession;
+import br.com.dbserver.voting.models.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -43,7 +40,7 @@ public class VoteCreator {
     public static Vote voteValid(){
         return new Vote(
                 1,
-                new Associate(1, "user", "357.672.271-87"),
+                new Associate(1, "user", "357.672.271-87", new Address()),
                 new Schedule(1, "pauta teste"),
                 new VotingSession(
                         1,

@@ -4,6 +4,8 @@ package br.com.dbserver.voting.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "associate")
@@ -20,13 +22,18 @@ public class Associate implements Serializable {
     @Column(name = "cpf")
     private String cpf;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", unique = true)
+    private Address address;
+
     public Associate() {
     }
 
-    public Associate(Integer id, String name, String cpf) {
+    public Associate(Integer id, String name, String cpf, Address address) {
         this.id = id;
         this.name = name;
         this.cpf = cpf;
+        this.address = address;
     }
 
     public Integer getId() {
@@ -51,5 +58,13 @@ public class Associate implements Serializable {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }
