@@ -7,11 +7,11 @@ import br.com.dbserver.voting.dtos.AddressDTO;
 import br.com.dbserver.voting.dtos.associate.AssociateRequestDTO;
 import br.com.dbserver.voting.dtos.associate.AssociateResponseDTO;
 import br.com.dbserver.voting.exceptions.InvalidCpfException;
-import br.com.dbserver.voting.helpers.Constants;
 import br.com.dbserver.voting.helpers.Util;
 import br.com.dbserver.voting.models.Address;
 import br.com.dbserver.voting.models.Associate;
 import br.com.dbserver.voting.repositories.AssociateRepository;
+import br.com.dbserver.voting.services.AddressService;
 import br.com.dbserver.voting.services.AssociateService;
 import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,12 +32,14 @@ public class AssociateServiceImpl implements AssociateService {
     private final AssociateDtoToAssociateMapper associateDtoToAssociateMapper;
     private final AddressToAddressDtoMapper addressToAddressDtoMapper;
     private final AddressDtoToAddressMapper addressDtoToAddressMapper;
+    private final AddressService addressService;
 
-    public AssociateServiceImpl(AssociateRepository associateRepository, AssociateDtoToAssociateMapper associateDtoToAssociateMapper, AddressToAddressDtoMapper addressToAddressDtoMapper, AddressDtoToAddressMapper addressDtoToAddressMapper) {
+    public AssociateServiceImpl(AssociateRepository associateRepository, AssociateDtoToAssociateMapper associateDtoToAssociateMapper, AddressToAddressDtoMapper addressToAddressDtoMapper, AddressDtoToAddressMapper addressDtoToAddressMapper, AddressService addressService) {
         this.associateRepository = associateRepository;
         this.associateDtoToAssociateMapper = associateDtoToAssociateMapper;
         this.addressToAddressDtoMapper = addressToAddressDtoMapper;
         this.addressDtoToAddressMapper = addressDtoToAddressMapper;
+        this.addressService = addressService;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class AssociateServiceImpl implements AssociateService {
     })
     public void createAssociate(AssociateRequestDTO associateRequestDTO) {
 
-        if(!Util.validCpf(associateRequestDTO.cpf())){
+        if (!Util.validCpf(associateRequestDTO.cpf())) {
             throw new InvalidCpfException("CPF invalido");
         }
 
@@ -59,8 +60,9 @@ public class AssociateServiceImpl implements AssociateService {
     }
 
     private void saveAddress(AssociateRequestDTO associateRequestDTO, Associate associate) {
-        AddressDTO addressAssociate = getAddressAssociate(associateRequestDTO.cep());
-        if(addressAssociate != null) {
+        AddressDTO addressAssociate = addressService.getAddress(associateRequestDTO.cep());
+        associate.setAddress(null);
+        if (addressAssociate.getCep() != null) {
             Address address = addressDtoToAddressMapper.map(addressAssociate, new Address());
             associate.setAddress(address);
         }
@@ -77,14 +79,11 @@ public class AssociateServiceImpl implements AssociateService {
                         associate.getId().toString(),
                         associate.getName(),
                         associate.getCpf(),
-                        addressToAddressDtoMapper.map(associate.getAddress(), new AddressDTO())))
+                        associate.getAddress() != null ?
+                                addressToAddressDtoMapper.map(associate.getAddress(), new AddressDTO())
+                                : new AddressDTO()))
                 .collect(Collectors.toList());
 
         return new PageImpl<>(associates, pageable, associatePage.getTotalPages());
-    }
-
-    private AddressDTO getAddressAssociate(String cep){
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(Constants.BRASIL_API_CEP + cep, AddressDTO.class);
     }
 }

@@ -1,9 +1,11 @@
 package br.com.dbserver.voting.dtos.votingsession;
 
 import br.com.dbserver.voting.dtos.ScheduleDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class VotingSessionResponseDTO implements Serializable {
 
     private Integer idSessionVoting;

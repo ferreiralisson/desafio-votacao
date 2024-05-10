@@ -10,11 +10,17 @@
             <p>
                 <mat-form-field appearance="outline">
                     <mat-label class="color-label">CPF</mat-label>
-                    <input matInput formControlName="cpf" [(ngModel)]="associate.cpf" placeholder="Digite um cpf valido">
+                    <input matInput formControlName="cpf" [(ngModel)]="associate.cpf" placeholder="Digite um cpf valido" mask="000.000.000-00">
                 </mat-form-field>
             </p>
             <p>
-                <button [disabled]="!associadoForm.valid" (click)="criarAssociado()" mat-flat-button class="large-button" color="success">Salvar</button>
+                <mat-form-field appearance="outline">
+                    <mat-label class="color-label">CEP</mat-label>
+                    <input matInput formControlName="cep" [(ngModel)]="associate.cep" placeholder="Digite um cep valido" mask="00000-000">
+                </mat-form-field>
+            </p>
+            <p>
+                <button [disabled]="!associadoForm.valid" (click)="criarAssociado()" mat-flat-button class="large-button" [color]="associadoForm.valid ? 'success' : 'primary'">Salvar</button>
             </p>
         </form>
 
@@ -32,27 +38,27 @@
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
         <!-- Position Column -->
-        <ng-container matColumnDef="demo-position">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
         </ng-container>
 
         <!-- Name Column -->
-        <ng-container matColumnDef="demo-name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef> NOME </th>
+            <td mat-cell *matCellDef="let element"> {{element.nome}} </td>
         </ng-container>
 
         <!-- Weight Column -->
-        <ng-container matColumnDef="demo-weight">
-            <th mat-header-cell *matHeaderCellDef> Weight </th>
-            <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+        <ng-container matColumnDef="cpf">
+            <th mat-header-cell *matHeaderCellDef> CPF </th>
+            <td mat-cell *matCellDef="let element"> {{element.cpf}} </td>
         </ng-container>
 
         <!-- Symbol Column -->
-        <ng-container matColumnDef="demo-symbol">
-            <th mat-header-cell *matHeaderCellDef> Symbol </th>
-            <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+        <ng-container matColumnDef="cidade">
+            <th mat-header-cell *matHeaderCellDef> CIDADE </th>
+            <td mat-cell *matCellDef="let element"> {{element.address.city}} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -61,3 +67,4 @@
 
     <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of associate"></mat-paginator>
 </div>
+

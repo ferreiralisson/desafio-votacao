@@ -22,7 +22,7 @@ public class Associate implements Serializable {
     @Column(name = "cpf")
     private String cpf;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id", unique = true)
     private Address address;
 

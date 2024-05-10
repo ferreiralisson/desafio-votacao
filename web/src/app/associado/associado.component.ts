@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,26 +15,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
+import { HelpersService } from '../services/helpers.service';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-associado',
@@ -48,39 +30,56 @@ const ELEMENT_DATA: PeriodicElement[] = [
     ReactiveFormsModule,
     MatTableModule,
     MatPaginatorModule,
+    NgxMaskDirective
   ],
+  providers: [provideNgxMask()],
   templateUrl: './associado.component.html',
   styleUrl: './associado.component.css',
 })
-export class AssociadoComponent implements AfterViewInit, OnInit {
+export class AssociadoComponent implements OnInit {
   associate: AssociadoDTO = {
     name: '',
     cpf: '',
+    cep: ''
   };
   associadoForm!: FormGroup;
-
+  associateTable: any;
   displayedColumns: string[] = [
-    'demo-position',
-    'demo-name',
-    'demo-weight',
-    'demo-symbol',
+    'id',
+    'nome',
+    'cpf',
+    'cidade',
   ];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  dataSource = new MatTableDataSource<AssociadoDTO>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private service: AssociadoService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private helper: HelpersService
   ) {}
+
   ngOnInit(): void {
     this.validateAssociateForm();
+    this.listAll();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  listAll(){
+    this.service.getAssociados()
+    .subscribe((response) => {
+      this.associateTable = response;
+      let arrAssociate = [];
+      for (let i = 0; i < this.associateTable.content.length; i++) {
+        arrAssociate.push(this.associateTable.content[i]);
+      }
+      this.associateTable = arrAssociate;
+      this.dataSource = new MatTableDataSource(this.associateTable);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    })
   }
 
   applyFilter(event: Event) {
@@ -94,14 +93,18 @@ export class AssociadoComponent implements AfterViewInit, OnInit {
 
   criarAssociado() {
     this.service.createAssociado(this.associate).subscribe((response) => {
+      this.helper.openSnackBar("Associado criado com sucesso");
       console.log('Associado criado com sucesso');
+      this.associadoForm.reset();
+      this.helper.reloadComponent(true);
     });
   }
 
   validateAssociateForm() {
     this.associadoForm = this.formBuilder.group({
       name: ['', [Validators.required]],
-      cpf: ['', [Validators.minLength(14), Validators.maxLength(14)]],
+      cpf: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
+      cep: ['', [Validators.required]]
     });
   }
 }

@@ -1,9 +1,11 @@
 package br.com.dbserver.voting.dtos.associate;
 
 import br.com.dbserver.voting.dtos.AddressDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssociateResponseDTO implements Serializable {
 
     private String id;

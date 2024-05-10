@@ -1,8 +1,11 @@
 package br.com.dbserver.voting.dtos.vote;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class VoteResponseDTO implements Serializable {
 
     private String voteId;

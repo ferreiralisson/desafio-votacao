@@ -3,11 +3,13 @@ package br.com.dbserver.voting.dtos.vote;
 import br.com.dbserver.voting.enums.StatusVotingSessionEnum;
 import br.com.dbserver.voting.models.Schedule;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResultOfTheVoteDTO implements Serializable {
     private Integer id;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss", shape = JsonFormat.Shape.STRING)

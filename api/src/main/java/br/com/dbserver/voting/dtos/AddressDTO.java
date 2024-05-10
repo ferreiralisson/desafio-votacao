@@ -1,7 +1,10 @@
 package br.com.dbserver.voting.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddressDTO implements Serializable {
 
     private Integer id;
@@ -12,7 +15,8 @@ public class AddressDTO implements Serializable {
     private String street;
     private String service;
 
-    public AddressDTO() {}
+    public AddressDTO() {
+    }
 
     public AddressDTO(Integer id, String cep, String state, String city, String neighborhood, String street, String service) {
         this.id = id;
@@ -79,4 +83,5 @@ public class AddressDTO implements Serializable {
     public void setService(String service) {
         this.service = service;
     }
+
 }
